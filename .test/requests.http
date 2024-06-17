@@ -1,0 +1,27 @@
+GET http://localhost:8080/api/users
+
+###
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "email": "{{userId}}",
+  "firstName": "John",
+  "lastName": "Doe",
+  "birthDate": "2000-01-01"
+}
+
+###
+GET http://localhost:8080/api/users/{{userId}}
+
+###
+GET http://localhost:8080/api/notes?userId={{userId}}
+
+###
+DELETE http://localhost:8080/api/users/{{userId}}
+
+###
+GET http://localhost:3000/api/notes
+
+###
+GET http://localhost:3000/api/notes/{{userId}}
