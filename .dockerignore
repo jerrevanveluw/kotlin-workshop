@@ -1,0 +1,3 @@
+**/
+!.service/dist/bundle.js
+!app/target/app-*.jar
