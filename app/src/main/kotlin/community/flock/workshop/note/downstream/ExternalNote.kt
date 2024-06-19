@@ -1,6 +1,6 @@
-package community.flock.workshop.note.model
+package community.flock.workshop.note.downstream
 
-data class Note(
+data class ExternalNote(
     val id: String,
     val title: String,
     val description: String,

@@ -1,5 +1,7 @@
-package community.flock.workshop.user
+package community.flock.workshop.user.upstream
 
+import community.flock.workshop.user.UserContext
+import community.flock.workshop.user.UserRepository
 import community.flock.workshop.user.UserService.deleteUserById
 import community.flock.workshop.user.UserService.getUserById
 import community.flock.workshop.user.UserService.getUsers
