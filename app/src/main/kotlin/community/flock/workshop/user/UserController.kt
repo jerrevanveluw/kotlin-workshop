@@ -1,6 +1,10 @@
 package community.flock.workshop.user
 
-import community.flock.workshop.exception.UserNotFoundException
+import community.flock.workshop.user.UserService.deleteUserById
+import community.flock.workshop.user.UserService.getUserById
+import community.flock.workshop.user.UserService.getUsers
+import community.flock.workshop.user.UserService.saveUser
+import community.flock.workshop.user.model.User
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,22 +15,27 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userService: UserService) {
+class UserController(private val liveUserRepository: UserRepository) {
+    private val context =
+        object : UserContext {
+            override val userRepository = liveUserRepository
+        }
+
     @GetMapping
-    fun getUsers(): List<User> = userService.getUsers().toList()
+    fun getUsers(): List<User> = context.getUsers().toList()
 
     @GetMapping("/{id}")
     fun getUserById(
         @PathVariable("id") id: String,
-    ): User = userService.getUserById(id) ?: throw UserNotFoundException()
+    ): User = context.getUserById(id)
 
     @PostMapping
     fun postUser(
         @RequestBody user: User,
-    ): User = userService.saveUser(user)
+    ): User = context.saveUser(user)
 
     @DeleteMapping("/{id}")
     fun deleteUserById(
         @PathVariable("id") id: String,
-    ): User = userService.deleteUserById(id) ?: throw UserNotFoundException()
+    ): User = context.deleteUserById(id)
 }

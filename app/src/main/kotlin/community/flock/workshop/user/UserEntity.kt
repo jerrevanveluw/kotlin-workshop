@@ -7,7 +7,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "users")
-data class User(
+data class UserEntity(
     @Id
     @Column(unique = true, nullable = false)
     val email: String,
