@@ -3,7 +3,8 @@ package community.flock.workshop.user
 import community.flock.workshop.environment.WithContainers
 import community.flock.workshop.user.UserMother.USER_ID
 import community.flock.workshop.user.UserMother.user
-import community.flock.workshop.user.UserProducer.toDto
+import community.flock.workshop.user.upstream.UserController
+import community.flock.workshop.user.upstream.UserProducer.produce
 import io.kotest.common.runBlocking
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
@@ -19,27 +20,27 @@ class UserEntityControllerTest : WithContainers() {
     @Test
     fun testPostUser(): Unit =
         runBlocking {
-            userController.postUser(user) shouldBe user.toDto()
+            userController.postUser(user) shouldBe user.produce()
         }
 
     @Test
     fun testGetUsers(): Unit =
         runBlocking {
             userController.postUser(user)
-            userController.getUsers().shouldNotBeEmpty().first() shouldBe user.toDto()
+            userController.getUsers().shouldNotBeEmpty().first() shouldBe user.produce()
         }
 
     @Test
     fun testGetUserById(): Unit =
         runBlocking {
             userController.postUser(user)
-            userController.getUserById(USER_ID) shouldBe user.toDto()
+            userController.getUserById(USER_ID) shouldBe user.produce()
         }
 
     @Test
     fun testDeleteUserById(): Unit =
         runBlocking {
             userController.postUser(user)
-            userController.deleteUserById(USER_ID) shouldBe user.toDto()
+            userController.deleteUserById(USER_ID) shouldBe user.produce()
         }
 }

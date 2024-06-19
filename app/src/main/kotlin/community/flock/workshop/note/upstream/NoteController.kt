@@ -1,8 +1,11 @@
-package community.flock.workshop.note
+package community.flock.workshop.note.upstream
 
+import community.flock.workshop.note.NoteAdapter
+import community.flock.workshop.note.NoteContext
+import community.flock.workshop.note.NoteDto
 import community.flock.workshop.note.NoteService.getNoteByUserId
-import community.flock.workshop.note.model.Note
-import community.flock.workshop.user.LiveUserRepository
+import community.flock.workshop.note.upstream.NoteProducer.produce
+import community.flock.workshop.user.downstream.LiveUserRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -26,15 +29,5 @@ class NoteController(
     ): List<NoteDto> =
         context
             .getNoteByUserId(userId)
-            .map { it.toDto() }
+            .map { it.produce() }
 }
-
-private fun Note.toDto() =
-    NoteDto(
-        id = id,
-        title = title,
-        description = description,
-        email = email,
-        user = user,
-        done = done,
-    )

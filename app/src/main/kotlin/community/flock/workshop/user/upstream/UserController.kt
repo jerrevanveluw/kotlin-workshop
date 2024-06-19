@@ -1,13 +1,16 @@
-package community.flock.workshop.user
+package community.flock.workshop.user.upstream
 
 import community.flock.workshop.common.Producer
 import community.flock.workshop.exception.UserNotFoundException
-import community.flock.workshop.user.UserProducer.toDto
+import community.flock.workshop.user.UserContext
+import community.flock.workshop.user.UserDto
+import community.flock.workshop.user.UserRepository
 import community.flock.workshop.user.UserService.deleteUserById
 import community.flock.workshop.user.UserService.getUserById
 import community.flock.workshop.user.UserService.getUsers
 import community.flock.workshop.user.UserService.saveUser
 import community.flock.workshop.user.model.User
+import community.flock.workshop.user.upstream.UserProducer.produce
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,7 +33,7 @@ class UserController(
     fun getUsers(): List<UserDto> =
         context
             .getUsers()
-            .map { it.toDto() }
+            .map { it.produce() }
 
     @GetMapping("/{id}")
     fun getUserById(
@@ -46,7 +49,7 @@ class UserController(
     ): UserDto =
         context
             .saveUser(user)
-            .toDto()
+            .produce()
 
     @DeleteMapping("/{id}")
     fun deleteUserById(
@@ -60,16 +63,6 @@ class UserController(
         producer: Producer<T, R>,
         block: () -> T?,
     ) = with(producer) {
-        block()?.toDto() ?: throw UserNotFoundException()
+        block()?.produce() ?: throw UserNotFoundException()
     }
-}
-
-object UserProducer : Producer<User, UserDto> {
-    override fun User.toDto() =
-        UserDto(
-            email = email,
-            firstName = firstName,
-            lastName = lastName,
-            birthDate = birthDate,
-        )
 }
