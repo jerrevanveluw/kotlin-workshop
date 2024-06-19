@@ -18,6 +18,7 @@
 
     <modules>
         <module>app</module>
+        <module>domain</module>
     </modules>
 
     <properties>
@@ -34,6 +35,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>community.flock</groupId>
+                <artifactId>domain</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.arrow-kt</groupId>
                 <artifactId>arrow-core-jvm</artifactId>
