@@ -3,6 +3,7 @@ package community.flock.workshop.user
 import community.flock.workshop.environment.WithContainers
 import community.flock.workshop.user.UserMother.USER_ID
 import community.flock.workshop.user.UserMother.user
+import community.flock.workshop.user.upstream.UserController
 import io.kotest.common.runBlocking
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
