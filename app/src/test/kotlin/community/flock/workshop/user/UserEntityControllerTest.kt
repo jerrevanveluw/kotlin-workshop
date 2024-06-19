@@ -3,6 +3,7 @@ package community.flock.workshop.user
 import community.flock.workshop.environment.WithContainers
 import community.flock.workshop.user.UserMother.USER_ID
 import community.flock.workshop.user.UserMother.user
+import community.flock.workshop.user.UserProducer.toDto
 import io.kotest.common.runBlocking
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class UserControllerTest : WithContainers() {
+class UserEntityControllerTest : WithContainers() {
     @Autowired
     lateinit var userController: UserController
 

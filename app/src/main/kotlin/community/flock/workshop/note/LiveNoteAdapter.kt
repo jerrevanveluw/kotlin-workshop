@@ -1,5 +1,6 @@
 package community.flock.workshop.note
 
+import community.flock.workshop.note.model.Note
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.http.MediaType
@@ -8,10 +9,10 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlux
 
 @Component
-class NoteAdapter(
+class LiveNoteAdapter(
     private val notesClient: WebClient,
-) {
-    suspend fun getNotesByUserId(userId: String) =
+) : NoteAdapter {
+    override suspend fun getNotesByUserId(userId: String) =
         notesClient
             .get()
             .uri("/$userId")
