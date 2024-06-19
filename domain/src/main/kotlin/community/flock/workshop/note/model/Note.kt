@@ -1,4 +1,4 @@
-package community.flock.workshop.note
+package community.flock.workshop.note.model
 
 data class Note(
     val id: String,
