@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val liveUserRepository: UserRepository) {
+class UserController(userRepository: UserRepository) {
     private val context =
         object : UserContext {
-            override val userRepository = liveUserRepository
+            override val userRepository = userRepository
         }
 
     @GetMapping

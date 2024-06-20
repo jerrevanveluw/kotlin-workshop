@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/notes")
 class NoteController(
-    liveNoteAdapter: NoteAdapter,
-    liveUserRepository: LiveUserRepository,
+    noteAdapter: NoteAdapter,
+    userRepository: LiveUserRepository,
 ) {
     private val context =
         object : NoteContext {
-            override val noteAdapter = liveNoteAdapter
-            override val userRepository = liveUserRepository
+            override val noteAdapter = noteAdapter
+            override val userRepository = userRepository
         }
 
     @GetMapping

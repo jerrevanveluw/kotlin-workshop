@@ -6,11 +6,11 @@ import community.flock.workshop.note.model.EnrichedNote
 object NoteProducer : Producer<EnrichedNote, ProducedNote> {
     override fun EnrichedNote.produce() =
         ProducedNote(
-            id = note.id,
-            title = note.title,
-            description = note.description,
-            email = note.email,
-            user = user,
+            id = "${note.id}",
+            title = "${note.title}",
+            description = "${note.description}",
+            email = "${note.email}",
+            user = "$fullName",
             done = note.done,
         )
 }

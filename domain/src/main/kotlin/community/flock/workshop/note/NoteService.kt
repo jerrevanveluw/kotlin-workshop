@@ -13,7 +13,8 @@ object NoteService {
         return notes.map {
             EnrichedNote(
                 note = it,
-                user = "${user.firstName} ${user.lastName}",
+                firstName = user.firstName,
+                lastName = user.lastName,
             )
         }
     }
