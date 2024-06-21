@@ -1,5 +1,6 @@
 package community.flock.workshop.note
 
+import arrow.core.right
 import com.ninjasquad.springmockk.MockkBean
 import community.flock.workshop.environment.WithContainers
 import community.flock.workshop.note.NoteMother.note
@@ -33,7 +34,7 @@ class NoteControllerTest : WithContainers() {
     @Test
     fun testNoteController(): Unit =
         runBlocking {
-            coEvery { noteAdapter.getNotesByUserId(any()) } returns listOf(note)
+            coEvery { noteAdapter.getNotesByUserId(any()) } returns listOf(note).right()
 
             userController.postUser(user)
             noteController.getNotesByUserId(USER_ID).shouldNotBeEmpty().first().run {

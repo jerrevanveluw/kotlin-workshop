@@ -10,9 +10,9 @@ object UserMother {
     const val USER_ID = "email@test.com"
     val user =
         User(
-            email = Email(USER_ID)!!,
-            firstName = FirstName("firstName")!!,
-            lastName = LastName("lastName")!!,
-            birthDate = BirthDate("2000-01-01")!!,
+            email = Email(USER_ID).getOrNull()!!,
+            firstName = FirstName("firstName").getOrNull()!!,
+            lastName = LastName("lastName").getOrNull()!!,
+            birthDate = BirthDate("2000-01-01").getOrNull()!!,
         )
 }
