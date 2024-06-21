@@ -1,6 +1,12 @@
 package community.flock.workshop.note.model
 
+import arrow.core.Either
+import arrow.core.raise.either
+import arrow.core.raise.ensure
 import community.flock.workshop.common.Value
+import community.flock.workshop.error.DescriptionError
+import community.flock.workshop.error.NoteIdError
+import community.flock.workshop.error.TitleError
 import community.flock.workshop.user.model.Email
 import java.util.UUID
 
@@ -18,7 +24,11 @@ data class Note(
         override fun toString() = value.toString()
 
         companion object {
-            operator fun invoke(value: String) = runCatching { UUID.fromString(value) }.map(::Id).getOrNull()
+            operator fun invoke(value: String) =
+                Either
+                    .catch { UUID.fromString(value) }
+                    .mapLeft { NoteIdError.InvalidUUID }
+                    .map(::Id)
         }
     }
 }
@@ -30,7 +40,11 @@ value class Title private constructor(
     override fun toString() = value
 
     companion object {
-        operator fun invoke(value: String) = value.takeIf { it.isNotBlank() }?.let(::Title)
+        operator fun invoke(value: String) =
+            either {
+                ensure(value.isNotBlank()) { TitleError.Empty }
+                Title(value)
+            }
     }
 }
 
@@ -41,6 +55,10 @@ value class Description private constructor(
     override fun toString() = value
 
     companion object {
-        operator fun invoke(value: String) = value.takeIf { it.isNotBlank() }?.let(::Description)
+        operator fun invoke(value: String) =
+            either {
+                ensure(value.isNotBlank()) { DescriptionError.Empty }
+                Description(value)
+            }
     }
 }

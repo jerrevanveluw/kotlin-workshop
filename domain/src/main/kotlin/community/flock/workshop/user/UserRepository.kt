@@ -1,15 +1,18 @@
 package community.flock.workshop.user
 
+import arrow.core.Either
+import community.flock.workshop.error.Error
+import community.flock.workshop.user.model.Email
 import community.flock.workshop.user.model.User
 
 interface UserRepository {
-    fun findAll(): List<User>
+    suspend fun findAll(): Either<Error, List<User>>
 
-    fun findById(id: String): User?
+    suspend fun findByEmail(email: Email): Either<Error, User>
 
-    fun save(user: User): User
+    suspend fun save(user: User): Either<Error, User>
 
-    fun deleteById(id: String): User?
+    suspend fun deleteByEmail(email: Email): Either<Error, User>
 }
 
 interface HasUserRepository {
