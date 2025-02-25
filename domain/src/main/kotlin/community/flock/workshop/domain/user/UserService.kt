@@ -1,17 +1,17 @@
 package community.flock.workshop.domain.user
 
-import community.flock.workshop.domain.error.UserNotFound
+import community.flock.workshop.domain.user.model.Email
 import community.flock.workshop.domain.user.model.User
 
 interface UserService : HasUserRepository
 
-fun UserService.getUsers(): List<User> = userRepository.findAll()
+suspend fun UserService.getUsers() = userRepository.findAll()
 
-fun UserService.getUserById(id: String) = userRepository.findById(id) ?: throw UserNotFound(id)
+suspend fun UserService.getUserByEmail(id: Email) = userRepository.findByEmail(id)
 
-fun UserService.saveUser(user: User) = userRepository.save(user)
+suspend fun UserService.saveUser(user: User) = userRepository.save(user)
 
-fun UserService.deleteUserById(id: String) = getUserById(id).also { userRepository.deleteById(id) }
+suspend fun UserService.deleteUserByEmail(id: Email) = getUserByEmail(id).also { userRepository.deleteByEmail(id) }
 
 interface HasUserService {
     val userService: UserService
