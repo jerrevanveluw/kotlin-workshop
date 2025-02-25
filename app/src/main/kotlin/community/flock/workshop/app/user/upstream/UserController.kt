@@ -1,7 +1,9 @@
-package community.flock.workshop.app.user
+package community.flock.workshop.app.user.upstream
 
 import community.flock.workshop.api.user.UserDto
+import community.flock.workshop.app.common.Producer
 import community.flock.workshop.app.exception.UserNotFoundException
+import community.flock.workshop.app.user.upstream.UserTransformer.consume
 import community.flock.workshop.domain.error.UserNotFound
 import community.flock.workshop.domain.user.UserContext
 import community.flock.workshop.domain.user.UserRepository
@@ -9,8 +11,7 @@ import community.flock.workshop.domain.user.UserService.deleteUserById
 import community.flock.workshop.domain.user.UserService.getUserById
 import community.flock.workshop.domain.user.UserService.getUsers
 import community.flock.workshop.domain.user.UserService.saveUser
-import community.flock.workshop.domain.user.model.User
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,57 +30,46 @@ class UserController(
             override val userRepository = liveUserRepository
         }
 
-    @GetMapping(produces = [APPLICATION_JSON_VALUE])
+    @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUsers(): List<UserDto> =
-        context
-            .getUsers()
-            .map { it.produce() }
+        handle(UsersProducer) {
+            context.getUsers()
+        }
 
-    @GetMapping("/{id}", produces = [APPLICATION_JSON_VALUE])
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getUserById(
         @PathVariable("id") id: String,
     ): UserDto =
-        handleThrowable {
+        handle(UserTransformer) {
             context.getUserById(id)
         }
 
-    @PostMapping(consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun postUser(
-        @RequestBody user: UserDto,
+        @RequestBody potentialUser: UserDto,
     ): UserDto =
-        user
-            .consume()
-            .let { context.saveUser(it) }
-            .produce()
+        handle(UserTransformer) {
+            val user = potentialUser.consume()
+            context.saveUser(user)
+        }
 
-    @DeleteMapping("/{id}", produces = [APPLICATION_JSON_VALUE])
+    @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun deleteUserById(
         @PathVariable("id") id: String,
     ): UserDto =
-        handleThrowable {
+        handle(UserTransformer) {
             context.deleteUserById(id)
         }
 
-    private fun handleThrowable(block: () -> User) =
-        try {
-            block()
-        } catch (e: UserNotFound) {
-            throw UserNotFoundException()
-        }.produce()
+    private fun <T : Any, R : Any> handle(
+        producer: Producer<T, R>,
+        block: () -> T,
+    ): R =
+        with(producer) {
+            try {
+                block()
+            } catch (e: UserNotFound) {
+                throw UserNotFoundException()
+            }.produce()
+        }
 }
-
-private fun UserDto.consume() =
-    User(
-        email = email,
-        firstName = firstName,
-        lastName = lastName,
-        birthDate = birthDate,
-    )
-
-private fun User.produce() =
-    UserDto(
-        email = email,
-        firstName = firstName,
-        lastName = lastName,
-        birthDate = birthDate,
-    )

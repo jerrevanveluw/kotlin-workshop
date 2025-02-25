@@ -1,10 +1,10 @@
-package community.flock.workshop.app.note
+package community.flock.workshop.app.note.upstream
 
 import community.flock.workshop.api.note.NoteDto
+import community.flock.workshop.app.note.upstream.NoteProducer.produce
 import community.flock.workshop.domain.note.NoteAdapter
 import community.flock.workshop.domain.note.NoteContext
 import community.flock.workshop.domain.note.NoteService.getNoteByUserId
-import community.flock.workshop.domain.note.model.Note
 import community.flock.workshop.domain.user.UserRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,13 +31,3 @@ class NoteController(
             .getNoteByUserId(userId)
             .map { it.produce() }
 }
-
-private fun Note.produce() =
-    NoteDto(
-        id = id,
-        title = title,
-        description = description,
-        email = email,
-        user = user,
-        done = done,
-    )

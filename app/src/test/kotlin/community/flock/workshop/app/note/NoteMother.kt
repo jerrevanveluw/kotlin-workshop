@@ -10,7 +10,6 @@ object NoteMother {
             title = "title",
             description = "description",
             email = USER_ID,
-            user = null,
             done = true,
         )
 }
