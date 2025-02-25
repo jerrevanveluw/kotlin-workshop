@@ -7,8 +7,8 @@ object UserMother {
     val user =
         UserDto(
             email = USER_ID,
-            firstName = "firstName",
-            lastName = "lastName",
+            firstName = "FirstName",
+            lastName = "LastName",
             birthDate = "2000-01-01",
         )
 }

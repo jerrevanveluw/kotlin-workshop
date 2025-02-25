@@ -25,8 +25,9 @@ value class Email private constructor(
     override fun toString() = value
 
     companion object {
-        operator fun invoke(value: String) =
+        operator fun invoke(value: String): Either<EmailValidationError, Email> =
             either {
+                ensure(value.isNotBlank()) { EmailValidationError.Empty }
                 ensure('@' in value) { EmailValidationError.Invalid }
                 Email(value)
             }
@@ -40,9 +41,10 @@ value class FirstName private constructor(
     override fun toString() = value
 
     companion object {
-        operator fun invoke(value: String) =
+        operator fun invoke(value: String): Either<FirstNameError, FirstName> =
             either {
                 ensure(value.isNotBlank()) { FirstNameError.Empty }
+                ensure(value.first().isUpperCase()) { FirstNameError.NotCapitalized }
                 FirstName(value.trim())
             }
     }
@@ -55,9 +57,10 @@ value class LastName private constructor(
     override fun toString() = value
 
     companion object {
-        operator fun invoke(value: String) =
+        operator fun invoke(value: String): Either<LastNameError, LastName> =
             either {
                 ensure(value.isNotBlank()) { LastNameError.Empty }
+                ensure(value.first().isUpperCase()) { LastNameError.NotCapitalized }
                 LastName(value.trim())
             }
     }

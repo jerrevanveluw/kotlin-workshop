@@ -1,19 +1,15 @@
 package community.flock.workshop.app.user.upstream
 
-import arrow.core.raise.either
 import community.flock.workshop.api.user.UserDto
-import community.flock.workshop.app.common.Producer
 import community.flock.workshop.app.common.handle
-import community.flock.workshop.app.common.mapError
-import community.flock.workshop.app.user.upstream.UserConsumer.consume
-import community.flock.workshop.app.user.upstream.UserProducer.produce
+import community.flock.workshop.app.user.upstream.UserIdConsumer.validate
+import community.flock.workshop.app.user.upstream.UserTransformer.validate
 import community.flock.workshop.domain.user.UserContext
 import community.flock.workshop.domain.user.UserRepository
 import community.flock.workshop.domain.user.UserService.deleteUserByEmail
 import community.flock.workshop.domain.user.UserService.getUserByEmail
 import community.flock.workshop.domain.user.UserService.getUsers
 import community.flock.workshop.domain.user.UserService.saveUser
-import community.flock.workshop.domain.user.model.Email
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -35,46 +31,34 @@ class UserController(
 
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getUsers(): List<UserDto> =
-        either {
-            context
-                .getUsers()
-                .mapError()
-                .bind()
-                .toList()
-        }.handle().map { it.produce() }
+        handle(UsersProducer) {
+            context.getUsers().bind()
+        }
 
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getUserById(
-        @PathVariable("id") id: String,
+        @PathVariable("id") potentialId: String,
     ): UserDto =
-        either {
-            val email = Email(id).mapError().bind()
-            context.getUserByEmail(email).mapError().bind()
-        }.handle().produce()
+        handle(UserTransformer) {
+            val id = potentialId.validate().bind()
+            context.getUserByEmail(id).bind()
+        }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun postUser(
         @RequestBody potentialUser: UserDto,
     ): UserDto =
-        either {
-            val user = potentialUser.consume().mapError().bind()
-            context.saveUser(user).mapError().bind()
-        }.handle().produce()
+        handle(UserTransformer) {
+            val user = potentialUser.validate().bind()
+            context.saveUser(user).bind()
+        }
 
     @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun deleteUserById(
-        @PathVariable("id") id: String,
+        @PathVariable("id") potentialId: String,
     ): UserDto =
-        either {
-            val email = Email(id).mapError().bind()
-            context.deleteUserByEmail(email).mapError().bind()
-        }.handle().produce()
-
-    private fun <T : Any, R : Any> handle(
-        producer: Producer<T, R>,
-        block: () -> T,
-    ): R =
-        with(producer) {
-            block().produce()
+        handle(UserTransformer) {
+            val id = potentialId.validate().bind()
+            context.deleteUserByEmail(id).bind()
         }
 }
