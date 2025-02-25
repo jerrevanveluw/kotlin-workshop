@@ -1,7 +1,8 @@
-package community.flock.workshop.app.note
+package community.flock.workshop.app.note.downstream
 
+import community.flock.workshop.app.note.downstream.NoteInternalizer.internalize
 import community.flock.workshop.domain.note.NoteAdapter
-import community.flock.workshop.domain.note.model.Note
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.http.MediaType
@@ -19,7 +20,8 @@ class LiveNoteAdapter(
             .uri("/$userId")
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .bodyToFlux<Note>()
+            .bodyToFlux<ExternalNote>()
             .asFlow()
+            .map { it.internalize() }
             .toList()
 }

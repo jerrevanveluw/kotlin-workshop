@@ -1,4 +1,4 @@
-package community.flock.workshop.app.user
+package community.flock.workshop.app.user.downstream
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

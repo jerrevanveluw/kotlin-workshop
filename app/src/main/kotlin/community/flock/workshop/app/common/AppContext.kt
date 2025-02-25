@@ -1,9 +1,9 @@
 package community.flock.workshop.app.common
 
-import community.flock.workshop.app.note.LiveNoteAdapter
-import community.flock.workshop.app.note.NoteControllerDI
-import community.flock.workshop.app.user.LiveUserRepository
-import community.flock.workshop.app.user.UserControllerDI
+import community.flock.workshop.app.note.downstream.LiveNoteAdapter
+import community.flock.workshop.app.note.upstream.NoteControllerDI
+import community.flock.workshop.app.user.downstream.LiveUserRepository
+import community.flock.workshop.app.user.upstream.UserControllerDI
 import community.flock.workshop.domain.note.NoteService
 import community.flock.workshop.domain.user.UserService
 import org.springframework.stereotype.Component

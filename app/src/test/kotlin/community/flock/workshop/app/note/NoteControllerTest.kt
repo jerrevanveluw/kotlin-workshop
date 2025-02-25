@@ -3,9 +3,11 @@ package community.flock.workshop.app.note
 import com.ninjasquad.springmockk.MockkBean
 import community.flock.workshop.app.environment.WithContainers
 import community.flock.workshop.app.note.NoteMother.note
-import community.flock.workshop.app.user.UserController
+import community.flock.workshop.app.note.downstream.LiveNoteAdapter
+import community.flock.workshop.app.note.upstream.NoteController
 import community.flock.workshop.app.user.UserMother.USER_ID
 import community.flock.workshop.app.user.UserMother.user
+import community.flock.workshop.app.user.upstream.UserController
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery

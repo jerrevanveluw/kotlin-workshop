@@ -3,6 +3,7 @@ package community.flock.workshop.app.user
 import community.flock.workshop.app.environment.WithContainers
 import community.flock.workshop.app.user.UserMother.USER_ID
 import community.flock.workshop.app.user.UserMother.user
+import community.flock.workshop.app.user.upstream.UserController
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
