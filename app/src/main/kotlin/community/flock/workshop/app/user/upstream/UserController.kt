@@ -1,16 +1,13 @@
 package community.flock.workshop.app.user.upstream
 
-import arrow.core.raise.either
 import community.flock.workshop.api.user.UserDto
 import community.flock.workshop.app.common.handle
-import community.flock.workshop.app.common.mapError
-import community.flock.workshop.app.user.upstream.UserConsumer.consume
-import community.flock.workshop.app.user.upstream.UserProducer.produce
+import community.flock.workshop.app.user.upstream.UserIdConsumer.validate
+import community.flock.workshop.app.user.upstream.UserTransformer.validate
 import community.flock.workshop.domain.user.HasUserService
 import community.flock.workshop.domain.user.deleteUserByEmail
 import community.flock.workshop.domain.user.getUserByEmail
 import community.flock.workshop.domain.user.getUsers
-import community.flock.workshop.domain.user.model.Email
 import community.flock.workshop.domain.user.saveUser
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -30,48 +27,40 @@ class UserController(
 ) {
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getUsers(): List<UserDto> =
-        either {
-            context
-                .userService
+        handle(UsersProducer) {
+            context.userService
                 .getUsers()
-                .mapError()
                 .bind()
-                .toList()
-        }.handle().map { it.produce() }
+        }
 
     @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun getUserById(
-        @PathVariable id: String,
+        @PathVariable("id") potentialId: String,
     ): UserDto =
-        either {
-            val email = Email(id).mapError().bind()
+        handle(UserTransformer) {
+            val id = potentialId.validate().bind()
             context.userService
-                .getUserByEmail(email)
-                .mapError()
+                .getUserByEmail(id)
                 .bind()
-        }.handle().produce()
+        }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun postUser(
         @RequestBody potentialUser: UserDto,
     ): UserDto =
-        either {
-            val user = potentialUser.consume().mapError().bind()
+        handle(UserTransformer) {
+            val user = potentialUser.validate().bind()
             context.userService
                 .saveUser(user)
-                .mapError()
                 .bind()
-        }.handle().produce()
+        }
 
     @DeleteMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     suspend fun deleteUserById(
-        @PathVariable id: String,
+        @PathVariable("id") potentialId: String,
     ): UserDto =
-        either {
-            val email = Email(id).mapError().bind()
-            context.userService
-                .deleteUserByEmail(email)
-                .mapError()
-                .bind()
-        }.handle().produce()
+        handle(UserTransformer) {
+            val id = potentialId.validate().bind()
+            context.userService.deleteUserByEmail(id).bind()
+        }
 }

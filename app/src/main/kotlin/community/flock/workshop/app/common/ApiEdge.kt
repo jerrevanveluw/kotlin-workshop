@@ -2,7 +2,8 @@ package community.flock.workshop.app.common
 
 import arrow.core.Either
 import arrow.core.getOrElse
-import community.flock.workshop.app.exception.AppException
+import arrow.core.raise.Raise
+import arrow.core.raise.either
 import community.flock.workshop.app.exception.DomainException
 import community.flock.workshop.app.exception.TechnicalException
 import community.flock.workshop.app.exception.ValidationException
@@ -11,6 +12,19 @@ import community.flock.workshop.domain.error.Error
 import community.flock.workshop.domain.error.TechnicalError
 import community.flock.workshop.domain.error.ValidationError
 import community.flock.workshop.domain.error.ValidationErrors
+import kotlin.experimental.ExperimentalTypeInference
+
+@OptIn(ExperimentalTypeInference::class)
+inline fun <T : Any, R : Any> handle(
+    producer: Producer<T, R>,
+    @BuilderInference block: Raise<Error>.() -> T,
+): R =
+    with(producer) {
+        either(block)
+            .mapError()
+            .getOrElse { throw it }
+            .produce()
+    }
 
 fun <R> Either<Error, R>.mapError() =
     mapLeft {
@@ -21,5 +35,3 @@ fun <R> Either<Error, R>.mapError() =
             is DomainError -> DomainException(error = it)
         }
     }
-
-fun <R> Either<AppException, R>.handle() = getOrElse { throw it }

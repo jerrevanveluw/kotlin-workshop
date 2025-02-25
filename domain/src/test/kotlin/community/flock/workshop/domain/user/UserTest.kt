@@ -25,16 +25,16 @@ class UserTest {
 
     @Test
     fun testFirstName() {
-        val (firstName) = FirstName("firstName").shouldBeRight()
-        firstName shouldBe "firstName"
+        val (firstName) = FirstName("FirstName").shouldBeRight()
+        firstName shouldBe "FirstName"
 
         FirstName("") shouldBeLeft FirstNameError.Empty
     }
 
     @Test
     fun testLastName() {
-        val (lastName) = LastName("lastName").shouldBeRight()
-        lastName shouldBe "lastName"
+        val (lastName) = LastName("LastName").shouldBeRight()
+        lastName shouldBe "LastName"
 
         LastName("") shouldBeLeft LastNameError.Empty
     }

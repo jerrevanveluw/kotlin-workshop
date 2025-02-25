@@ -40,7 +40,7 @@ class NoteControllerTest : WithContainers {
                 title shouldBe "title"
                 description shouldBe "description"
                 email shouldBe USER_ID
-                user shouldBe "firstName lastName"
+                user shouldBe "FirstName LastName"
                 done shouldBe true
             }
         }
