@@ -1,8 +1,15 @@
 package community.flock.workshop.app.user
 
 import community.flock.workshop.api.user.UserDto
-import community.flock.workshop.app.common.Producible
 import community.flock.workshop.app.exception.UserNotFoundException
+import community.flock.workshop.domain.error.UserNotFound
+import community.flock.workshop.domain.user.UserContext
+import community.flock.workshop.domain.user.UserRepository
+import community.flock.workshop.domain.user.UserService.deleteUserById
+import community.flock.workshop.domain.user.UserService.getUserById
+import community.flock.workshop.domain.user.UserService.getUsers
+import community.flock.workshop.domain.user.UserService.saveUser
+import community.flock.workshop.domain.user.model.User
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,11 +22,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/users")
 class UserController(
-    private val userService: UserService,
+    private val liveUserRepository: UserRepository,
 ) {
+    private val context =
+        object : UserContext {
+            override val userRepository = liveUserRepository
+        }
+
     @GetMapping(produces = [APPLICATION_JSON_VALUE])
     fun getUsers(): List<UserDto> =
-        userService
+        context
             .getUsers()
             .map { it.produce() }
 
@@ -27,8 +39,8 @@ class UserController(
     fun getUserById(
         @PathVariable("id") id: String,
     ): UserDto =
-        handleNullable {
-            userService.getUserById(id)
+        handleThrowable {
+            context.getUserById(id)
         }
 
     @PostMapping(consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE])
@@ -37,22 +49,35 @@ class UserController(
     ): UserDto =
         user
             .consume()
-            .let(userService::saveUser)
+            .let { context.saveUser(it) }
             .produce()
 
     @DeleteMapping("/{id}", produces = [APPLICATION_JSON_VALUE])
     fun deleteUserById(
         @PathVariable("id") id: String,
     ): UserDto =
-        handleNullable {
-            userService.deleteUserById(id)
+        handleThrowable {
+            context.deleteUserById(id)
         }
 
-    private fun <T : Any> handleNullable(block: () -> Producible<T>?) = block()?.produce() ?: throw UserNotFoundException()
+    private fun handleThrowable(block: () -> User) =
+        try {
+            block()
+        } catch (e: UserNotFound) {
+            throw UserNotFoundException()
+        }.produce()
 }
 
 private fun UserDto.consume() =
     User(
+        email = email,
+        firstName = firstName,
+        lastName = lastName,
+        birthDate = birthDate,
+    )
+
+private fun User.produce() =
+    UserDto(
         email = email,
         firstName = firstName,
         lastName = lastName,

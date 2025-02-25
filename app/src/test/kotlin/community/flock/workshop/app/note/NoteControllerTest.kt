@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class NoteControllerTest : WithContainers() {
     @MockkBean
-    private lateinit var noteAdapter: NoteAdapter
+    private lateinit var noteAdapter: LiveNoteAdapter
 
     @Autowired
     private lateinit var userController: UserController
