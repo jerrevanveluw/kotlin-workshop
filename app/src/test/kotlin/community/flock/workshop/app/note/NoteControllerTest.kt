@@ -35,7 +35,7 @@ class NoteControllerTest : WithContainers {
 
             userController.postUser(user)
             noteController.getNotesByUserId(USER_ID).shouldNotBeEmpty().first().run {
-                id shouldBe "id"
+                id shouldBe "0ec33ba3-64a1-4f34-a33d-6cab4b43baeb"
                 title shouldBe "title"
                 description shouldBe "description"
                 email shouldBe USER_ID

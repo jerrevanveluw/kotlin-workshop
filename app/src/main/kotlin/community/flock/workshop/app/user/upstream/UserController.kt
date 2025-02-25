@@ -2,9 +2,7 @@ package community.flock.workshop.app.user.upstream
 
 import community.flock.workshop.api.user.UserDto
 import community.flock.workshop.app.common.Producer
-import community.flock.workshop.app.exception.UserNotFoundException
 import community.flock.workshop.app.user.upstream.UserTransformer.consume
-import community.flock.workshop.domain.error.UserNotFound
 import community.flock.workshop.domain.user.HasUserService
 import community.flock.workshop.domain.user.deleteUserById
 import community.flock.workshop.domain.user.getUserById
@@ -64,10 +62,6 @@ class UserController(
         block: () -> T,
     ): R =
         with(producer) {
-            try {
-                block()
-            } catch (_: UserNotFound) {
-                throw UserNotFoundException()
-            }.produce()
+            block().produce()
         }
 }

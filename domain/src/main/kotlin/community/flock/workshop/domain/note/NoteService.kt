@@ -14,7 +14,8 @@ suspend fun NoteService.getNoteByUserId(userId: String): List<EnrichedNote> {
     return notes.map {
         EnrichedNote(
             note = it,
-            user = "${user.firstName} ${user.lastName}",
+            firstName = user.firstName,
+            lastName = user.lastName,
         )
     }
 }
