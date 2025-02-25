@@ -1,31 +1,35 @@
 package community.flock.workshop.app.exception
 
+import community.flock.workshop.domain.error.DomainError
+import community.flock.workshop.domain.error.ValidationError
+
 sealed class AppException(
     override val message: String,
-) : RuntimeException(message)
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)
 
-sealed class ValidationException(
-    what: String,
-) : AppException("$what is not valid")
+class TechnicalException(
+    cause: Throwable,
+    override val message: String,
+) : AppException(message, cause) {
+    companion object {
+        operator fun invoke(
+            cause: Throwable,
+            message: String? = null,
+        ) = TechnicalException(cause, message ?: "Technical Exception, check cause")
+    }
+}
 
-sealed class UserValidationException(
-    what: String,
-) : ValidationException(what)
+sealed class BusinessException(
+    message: String,
+) : AppException(message) {
+    override fun fillInStackTrace() = this
+}
 
-class EmailNotValid : UserValidationException("Email")
+class DomainException(
+    val error: DomainError,
+) : BusinessException(error.message)
 
-class FirstNameNotValid : UserValidationException("FirstName")
-
-class LastNameNotValid : UserValidationException("LastName")
-
-class BirthDateNotValid : UserValidationException("BirthDate")
-
-sealed class NoteValidationException(
-    what: String,
-) : ValidationException(what)
-
-class NoteIdNotValid : NoteValidationException("NoteId")
-
-class TitleNotValid : NoteValidationException("Title")
-
-class DescriptionNotValid : NoteValidationException("Description")
+class ValidationException(
+    errors: List<ValidationError>,
+) : BusinessException(errors.joinToString { it.message })

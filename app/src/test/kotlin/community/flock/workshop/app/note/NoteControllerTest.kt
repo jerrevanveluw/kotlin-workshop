@@ -1,5 +1,6 @@
 package community.flock.workshop.app.note
 
+import arrow.core.right
 import com.ninjasquad.springmockk.MockkBean
 import community.flock.workshop.app.environment.WithContainers
 import community.flock.workshop.app.note.NoteMother.note
@@ -13,13 +14,11 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class NoteControllerTest : WithContainers() {
     @MockkBean
     private lateinit var noteAdapter: LiveNoteAdapter
@@ -33,7 +32,7 @@ class NoteControllerTest : WithContainers() {
     @Test
     fun testNoteController(): Unit =
         runBlocking {
-            coEvery { noteAdapter.getNotesByUserId(any()) } returns listOf(note)
+            coEvery { noteAdapter.getNotesByUserId(any()) } returns listOf(note).right()
 
             userController.postUser(user)
             noteController.getNotesByUserId(USER_ID).shouldNotBeEmpty().first().run {

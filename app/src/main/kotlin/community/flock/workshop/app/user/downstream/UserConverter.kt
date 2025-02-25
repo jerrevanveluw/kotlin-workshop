@@ -1,17 +1,17 @@
 package community.flock.workshop.app.user.downstream
 
-import community.flock.workshop.app.common.Converter
-import community.flock.workshop.app.exception.BirthDateNotValid
-import community.flock.workshop.app.exception.EmailNotValid
-import community.flock.workshop.app.exception.FirstNameNotValid
-import community.flock.workshop.app.exception.LastNameNotValid
+import arrow.core.Either
+import arrow.core.raise.either
+import community.flock.workshop.app.common.Externalizer
+import community.flock.workshop.app.common.Internalizer
+import community.flock.workshop.domain.error.ValidationError
 import community.flock.workshop.domain.user.model.BirthDate
 import community.flock.workshop.domain.user.model.Email
 import community.flock.workshop.domain.user.model.FirstName
 import community.flock.workshop.domain.user.model.LastName
 import community.flock.workshop.domain.user.model.User
 
-object UserConverter : Converter<User, UserEntity> {
+object UserExternalizer : Externalizer<User, UserEntity> {
     override fun User.externalize() =
         UserEntity(
             email = "$email",
@@ -19,18 +19,16 @@ object UserConverter : Converter<User, UserEntity> {
             lastName = "$lastName",
             birthDate = "$birthDate",
         )
+}
 
+object UserInternalizer : Internalizer<UserEntity, Either<ValidationError, User>> {
     override fun UserEntity.internalize() =
-        run {
-            val email = Email(email) ?: throw EmailNotValid()
-            val firstName = FirstName(firstName) ?: throw FirstNameNotValid()
-            val lastName = LastName(lastName) ?: throw LastNameNotValid()
-            val birthDate = BirthDate(birthDate) ?: throw BirthDateNotValid()
+        either {
             User(
-                email = email,
-                firstName = firstName,
-                lastName = lastName,
-                birthDate = birthDate,
+                email = Email(email).bind(),
+                firstName = FirstName(firstName).bind(),
+                lastName = LastName(lastName).bind(),
+                birthDate = BirthDate(birthDate).bind(),
             )
         }
 }
