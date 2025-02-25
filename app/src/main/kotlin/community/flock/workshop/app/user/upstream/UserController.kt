@@ -2,9 +2,7 @@ package community.flock.workshop.app.user.upstream
 
 import community.flock.workshop.api.user.UserDto
 import community.flock.workshop.app.common.Producer
-import community.flock.workshop.app.exception.UserNotFoundException
 import community.flock.workshop.app.user.upstream.UserTransformer.consume
-import community.flock.workshop.domain.error.UserNotFound
 import community.flock.workshop.domain.user.UserContext
 import community.flock.workshop.domain.user.UserRepository
 import community.flock.workshop.domain.user.UserService.deleteUserById
@@ -23,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/users")
 class UserController(
-    private val liveUserRepository: UserRepository,
+    userRepository: UserRepository,
 ) {
     private val context =
         object : UserContext {
-            override val userRepository = liveUserRepository
+            override val userRepository = userRepository
         }
 
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -66,10 +64,6 @@ class UserController(
         block: () -> T,
     ): R =
         with(producer) {
-            try {
-                block()
-            } catch (e: UserNotFound) {
-                throw UserNotFoundException()
-            }.produce()
+            block().produce()
         }
 }
