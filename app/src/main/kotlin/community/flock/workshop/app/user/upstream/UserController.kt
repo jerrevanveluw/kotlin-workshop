@@ -1,6 +1,7 @@
 package community.flock.workshop.app.user.upstream
 
-import community.flock.workshop.api.user.UserDto
+import arrow.core.raise.context.bind
+import community.flock.wirespec.generated.model.UserDto
 import community.flock.workshop.app.common.handle
 import community.flock.workshop.app.user.upstream.UserIdConsumer.validate
 import community.flock.workshop.app.user.upstream.UserTransformer.validate

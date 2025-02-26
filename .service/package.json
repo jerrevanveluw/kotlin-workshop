@@ -10,7 +10,7 @@
     "clean:dist": "rimraf dist",
     "clean:generated": "rimraf generated",
     "clean:node": "rimraf node_modules",
-    "generate": "wirespec compile -i ./src/wirespec -o ./generated -l TypeScript -p ''",
+    "generate": "wirespec compile -i ./src/wirespec -o ./generated -l TypeScript -l Kotlin -p 'community.flock.workshop.spi.note'",
     "update": "npx --yes update-ruecksichtslos"
   },
   "dependencies": {

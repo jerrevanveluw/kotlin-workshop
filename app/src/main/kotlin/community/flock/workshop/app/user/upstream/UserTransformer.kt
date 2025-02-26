@@ -4,7 +4,7 @@ import arrow.core.EitherNel
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import arrow.core.toEitherNel
-import community.flock.workshop.api.user.UserDto
+import community.flock.wirespec.generated.model.UserDto
 import community.flock.workshop.app.common.Producer
 import community.flock.workshop.app.common.Transformer
 import community.flock.workshop.app.common.Validator
@@ -19,11 +19,11 @@ import community.flock.workshop.domain.user.model.LastName
 import community.flock.workshop.domain.user.model.User
 
 object UsersProducer : Producer<Iterable<User>, List<UserDto>> {
-    override fun Iterable<User>.produce() = map { it.produce() }
+    override fun Iterable<User>.produce(): List<UserDto> = map { it.produce() }
 }
 
 object UserTransformer : Transformer<UserValidationError, User, UserDto> {
-    override fun User.produce() =
+    override fun User.produce(): UserDto =
         UserDto(
             email = "$email",
             firstName = "$firstName",
@@ -34,7 +34,7 @@ object UserTransformer : Transformer<UserValidationError, User, UserDto> {
     override fun UserDto.consume(): EitherNel<UserValidationError, User> =
         either {
             zipOrAccumulate(
-                { email.consume().bind() },
+                { email.consume().bindNel() },
                 { FirstName(firstName).bind() },
                 { LastName(lastName).bind() },
                 { BirthDate(birthDate).bind() },

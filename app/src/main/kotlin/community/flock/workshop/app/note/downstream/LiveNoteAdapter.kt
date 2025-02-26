@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlux
+import community.flock.workshop.spi.note.NoteDto as ExternalNote
 
 @Component
 class LiveNoteAdapter(

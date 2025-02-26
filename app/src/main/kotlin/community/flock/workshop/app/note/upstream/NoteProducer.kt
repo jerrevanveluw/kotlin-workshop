@@ -1,6 +1,6 @@
 package community.flock.workshop.app.note.upstream
 
-import community.flock.workshop.api.note.NoteDto
+import community.flock.wirespec.generated.model.NoteDto
 import community.flock.workshop.app.common.Producer
 import community.flock.workshop.app.note.upstream.NoteProducer.produce
 import community.flock.workshop.domain.note.model.EnrichedNote

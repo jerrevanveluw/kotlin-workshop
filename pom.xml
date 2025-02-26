@@ -21,6 +21,7 @@
         <module>api</module>
         <module>app</module>
         <module>domain</module>
+        <module>spi</module>
     </modules>
 
     <properties>
@@ -53,6 +54,26 @@
                 <groupId>community.flock</groupId>
                 <artifactId>domain</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock</groupId>
+                <artifactId>spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>jackson-jvm</artifactId>
+                <version>${wirespec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>spring-jvm</artifactId>
+                <version>${wirespec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>wirespec-jvm</artifactId>
+                <version>${wirespec.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.arrow-kt</groupId>
