@@ -2,6 +2,8 @@ package community.flock.workshop.app.note
 
 import arrow.core.right
 import com.ninjasquad.springmockk.MockkBean
+import community.flock.workshop.api.generated.endpoint.GetNotesByUserId
+import community.flock.workshop.api.generated.endpoint.PostUser
 import community.flock.workshop.app.environment.WithContainers
 import community.flock.workshop.app.note.NoteMother.note
 import community.flock.workshop.app.note.downstream.LiveNoteAdapter
@@ -9,8 +11,8 @@ import community.flock.workshop.app.note.upstream.NoteController
 import community.flock.workshop.app.user.UserMother.USER_ID
 import community.flock.workshop.app.user.UserMother.user
 import community.flock.workshop.app.user.upstream.UserController
-import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeTypeOf
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -34,14 +36,21 @@ class NoteControllerTest : WithContainers {
         runBlocking {
             coEvery { noteAdapter.getNotesByUserId(any()) } returns listOf(note).right()
 
-            userController.postUser(user)
-            noteController.getNotesByUserId(USER_ID).shouldNotBeEmpty().first().run {
-                id shouldBe "0ec33ba3-64a1-4f34-a33d-6cab4b43baeb"
-                title shouldBe "title"
-                description shouldBe "description"
-                email shouldBe USER_ID
-                user shouldBe "FirstName LastName"
-                done shouldBe true
-            }
+            val request = PostUser.Request(body = user)
+
+            userController.postUser(request)
+            noteController
+                .getNotesByUserId(GetNotesByUserId.Request(potentialUserId = USER_ID))
+                .shouldBeTypeOf<GetNotesByUserId.Response200>()
+                .body
+                .first()
+                .run {
+                    id shouldBe "0ec33ba3-64a1-4f34-a33d-6cab4b43baeb"
+                    title shouldBe "title"
+                    description shouldBe "description"
+                    email shouldBe USER_ID
+                    user shouldBe "FirstName LastName"
+                    done shouldBe true
+                }
         }
 }

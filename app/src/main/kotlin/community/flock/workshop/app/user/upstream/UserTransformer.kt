@@ -4,7 +4,7 @@ import arrow.core.EitherNel
 import arrow.core.raise.either
 import arrow.core.raise.zipOrAccumulate
 import arrow.core.toEitherNel
-import community.flock.wirespec.generated.model.UserDto
+import community.flock.workshop.api.generated.model.UserDto
 import community.flock.workshop.app.common.Producer
 import community.flock.workshop.app.common.Transformer
 import community.flock.workshop.app.common.Validator

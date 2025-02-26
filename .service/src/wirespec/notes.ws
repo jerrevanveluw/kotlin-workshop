@@ -8,3 +8,11 @@ type NoteDto {
     email: Email,
     done: Boolean
 }
+
+endpoint GetNotes GET /api/notes -> {
+    200 -> NoteDto[]
+}
+
+endpoint GetNotesByEmail GET /api/notes/{email: String} -> {
+    200 -> NoteDto[]
+}

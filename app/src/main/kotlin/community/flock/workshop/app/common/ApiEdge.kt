@@ -2,8 +2,11 @@ package community.flock.workshop.app.common
 
 import arrow.core.Either
 import arrow.core.getOrElse
+import arrow.core.left
 import arrow.core.raise.Raise
 import arrow.core.raise.either
+import arrow.core.right
+import community.flock.wirespec.kotlin.Wirespec
 import community.flock.workshop.app.exception.DomainException
 import community.flock.workshop.app.exception.TechnicalException
 import community.flock.workshop.app.exception.ValidationException
@@ -26,12 +29,32 @@ inline fun <T : Any, R : Any> handle(
             .produce()
     }
 
-fun <R> Either<Error, R>.mapError() =
-    mapLeft {
-        when (it) {
-            is TechnicalError -> TechnicalException(cause = it.cause, message = it.message)
-            is ValidationError -> ValidationException(errors = listOf(it))
-            is ValidationErrors -> ValidationException(errors = it.errors)
-            is DomainError -> DomainException(error = it)
-        }
+fun <R> Either<Error, R>.mapError() = mapLeft(Error::mapError)
+
+fun Error.mapError() =
+    when (this) {
+        is TechnicalError -> TechnicalException(cause = cause, message = message)
+        is ValidationError -> ValidationException(errors = listOf(this))
+        is ValidationErrors -> ValidationException(errors = errors)
+        is DomainError -> DomainException(error = this)
     }
+
+@OptIn(ExperimentalTypeInference::class)
+inline fun <A : Any, T : Any, R : Wirespec.Response<*>> wirespec(
+    producer: Producer<A, T>,
+    response200: (T) -> R,
+    recover: (DomainError) -> Either<Error, R> = { it.left() },
+    @BuilderInference block: Raise<Error>.() -> A,
+): R =
+    with(producer) {
+        either(block)
+            .map { it.produce() }
+    }.map(response200)
+        .fold({
+            when (it) {
+                is DomainError -> recover(it)
+                else -> it.left()
+            }
+        }, { it.right() })
+        .mapError()
+        .getOrElse { throw it }

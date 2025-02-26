@@ -6,3 +6,7 @@ type NoteDto {
     user: String?,
     done: Boolean
 }
+
+endpoint GetNotesByUserId GET /api/notes?{potentialUserId: String} -> {
+    200 -> NoteDto[]
+}

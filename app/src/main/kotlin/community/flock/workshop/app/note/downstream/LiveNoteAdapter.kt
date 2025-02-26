@@ -2,36 +2,33 @@ package community.flock.workshop.app.note.downstream
 
 import arrow.core.Either
 import arrow.core.raise.either
-import community.flock.workshop.app.common.catch
+import community.flock.wirespec.integration.spring.kotlin.client.WirespecWebClient
 import community.flock.workshop.app.note.downstream.NoteVerifier.verify
 import community.flock.workshop.domain.error.Error
 import community.flock.workshop.domain.note.NoteAdapter
 import community.flock.workshop.domain.note.model.Note
 import community.flock.workshop.domain.user.model.Email
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactive.asFlow
-import org.springframework.http.MediaType
+import community.flock.workshop.spi.generated.endpoint.GetNotesByEmail
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToFlux
-import community.flock.workshop.spi.note.NoteDto as ExternalNote
+
+interface DownstreamNotesApi : GetNotesByEmail.Handler
+
+@Component
+class NoteWebClient(
+    private val wirespecWebClient: WirespecWebClient,
+) : DownstreamNotesApi {
+    override suspend fun getNotesByEmail(request: GetNotesByEmail.Request): GetNotesByEmail.Response<*> = wirespecWebClient.send(request)
+}
 
 @Component
 class LiveNoteAdapter(
-    private val notesClient: WebClient,
+    private val client: NoteWebClient,
 ) : NoteAdapter {
     override suspend fun getNotesByUserId(email: Email): Either<Error, List<Note>> =
         either {
-            notesClient
-                .get()
-                .uri("/$email")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToFlux<ExternalNote>()
-                .catch { asFlow() }
-                .bind()
-                .map { it.verify().bind() }
-                .toList()
+            val req = GetNotesByEmail.Request(email = email.value)
+            when (val res = client.getNotesByEmail(req)) {
+                is GetNotesByEmail.Response200 -> res.body.map { it.verify().bind() }
+            }
         }
 }

@@ -11,7 +11,7 @@ import community.flock.workshop.domain.note.model.Description
 import community.flock.workshop.domain.note.model.Note
 import community.flock.workshop.domain.note.model.Title
 import community.flock.workshop.domain.user.model.Email
-import community.flock.workshop.spi.note.NoteDto as ExternalNote
+import community.flock.workshop.spi.generated.model.NoteDto as ExternalNote
 
 object NoteVerifier : Verifier<ValidationError, ExternalNote, Note> {
     override fun ExternalNote.internalize() =
