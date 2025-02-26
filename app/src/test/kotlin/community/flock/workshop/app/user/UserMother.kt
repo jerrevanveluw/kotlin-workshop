@@ -1,6 +1,6 @@
 package community.flock.workshop.app.user
 
-import community.flock.wirespec.generated.UserDto
+import community.flock.workshop.api.generated.UserDto
 
 object UserMother {
     const val USER_ID = "email@test.com"

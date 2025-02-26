@@ -37647,9 +37647,132 @@ var require_express2 = __commonJS({
   }
 });
 
+// generated/community/flock/workshop/spi/note/Notes.ts
+var GetNotes;
+((GetNotes2) => {
+  GetNotes2.request = () => ({
+    path: {},
+    method: "GET",
+    queries: {},
+    headers: {},
+    body: void 0
+  });
+  GetNotes2.response200 = (props) => ({
+    status: 200,
+    headers: {},
+    body: props.body
+  });
+  GetNotes2.client = (serialization) => ({
+    to: (it) => ({
+      method: "GET",
+      path: ["api", "notes"],
+      queries: {},
+      headers: {},
+      body: serialization.serialize(it.body)
+    }),
+    from: (it) => {
+      switch (it.status) {
+        case 200:
+          return {
+            status: 200,
+            headers: {},
+            body: serialization.deserialize(it.body)
+          };
+        default:
+          throw new Error(`Cannot internalize response with status: ${it.status}`);
+      }
+    }
+  });
+  GetNotes2.server = (serialization) => ({
+    from: (it) => {
+      return {
+        method: "GET",
+        path: {},
+        queries: {},
+        headers: {},
+        body: serialization.deserialize(it.body)
+      };
+    },
+    to: (it) => ({
+      status: it.status,
+      headers: {},
+      body: serialization.serialize(it.body)
+    })
+  });
+  GetNotes2.api = {
+    name: "getNotes",
+    method: "GET",
+    path: "api/notes",
+    server: GetNotes2.server,
+    client: GetNotes2.client
+  };
+})(GetNotes || (GetNotes = {}));
+var GetNotesByEmail;
+((GetNotesByEmail2) => {
+  GetNotesByEmail2.request = (props) => ({
+    path: { email: props.email },
+    method: "GET",
+    queries: {},
+    headers: {},
+    body: void 0
+  });
+  GetNotesByEmail2.response200 = (props) => ({
+    status: 200,
+    headers: {},
+    body: props.body
+  });
+  GetNotesByEmail2.client = (serialization) => ({
+    to: (it) => ({
+      method: "GET",
+      path: ["api", "notes", serialization.serialize(it.path.email)],
+      queries: {},
+      headers: {},
+      body: serialization.serialize(it.body)
+    }),
+    from: (it) => {
+      switch (it.status) {
+        case 200:
+          return {
+            status: 200,
+            headers: {},
+            body: serialization.deserialize(it.body)
+          };
+        default:
+          throw new Error(`Cannot internalize response with status: ${it.status}`);
+      }
+    }
+  });
+  GetNotesByEmail2.server = (serialization) => ({
+    from: (it) => {
+      return {
+        method: "GET",
+        path: {
+          email: serialization.deserialize(it.path[2])
+        },
+        queries: {},
+        headers: {},
+        body: serialization.deserialize(it.body)
+      };
+    },
+    to: (it) => ({
+      status: it.status,
+      headers: {},
+      body: serialization.serialize(it.body)
+    })
+  });
+  GetNotesByEmail2.api = {
+    name: "getNotesByEmail",
+    method: "GET",
+    path: "api/notes/:email",
+    server: GetNotesByEmail2.server,
+    client: GetNotesByEmail2.client
+  };
+})(GetNotesByEmail || (GetNotesByEmail = {}));
+
 // src/typescript/index.ts
 var express = require_express2();
 var app = express();
+var port = 3e3;
 var notes = [
   {
     id: "21500679-90e9-4dff-997b-45175c29a6d4",
@@ -37674,14 +37797,14 @@ var notes = [
   }
 ];
 app.use(express.json());
-app.get("/api/notes", (_request, response) => {
+app.get(`/${GetNotes.api.path}`, (_request, response) => {
   response.send(notes);
 });
-app.get("/api/notes/:email", (request, response) => {
+app.get(`/${GetNotesByEmail.api.path}`, (request, response) => {
   response.send(notes.filter((it) => it.email === request.params.email));
 });
-app.listen(3e3, () => {
-  console.log("Server Listening on port:", 3e3);
+app.listen(port, () => {
+  console.log("Server Listening on port:", port);
 });
 /*! Bundled license information:
 

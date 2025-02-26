@@ -15,6 +15,10 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -27,18 +31,26 @@
                 <groupId>community.flock.wirespec.plugin.maven</groupId>
                 <artifactId>wirespec-maven-plugin</artifactId>
                 <version>${wirespec.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>community.flock.wirespec.integration</groupId>
+                        <artifactId>spring-jvm</artifactId>
+                        <version>${wirespec.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>kotlin</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>custom</goal>
                         </goals>
                         <configuration>
                             <input>${project.basedir}/src/main/wirespec</input>
                             <output>${project.build.directory}/generated-sources/kotlin</output>
-                            <languages>
-                                <language>Kotlin</language>
-                            </languages>
+                            <emitterClass>community.flock.wirespec.integration.spring.kotlin.emit.SpringKotlinEmitter</emitterClass>
+                            <shared>Kotlin</shared>
+                            <extension>kt</extension>
+                            <packageName>community.flock.workshop.api.generated</packageName>
                         </configuration>
                     </execution>
                 </executions>

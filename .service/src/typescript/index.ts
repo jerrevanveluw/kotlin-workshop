@@ -1,8 +1,10 @@
-import {NoteDto} from "../../generated/Notes";
+import {GetNotes, GetNotesByEmail, NoteDto} from "../../generated/community/flock/workshop/spi/note/Notes";
+import {Request, Response} from "express";
 
 const express: any = require('express');
+const app: any = express()
 
-const app: any = express();
+const port = 3000
 
 const notes: NoteDto[] = [
     {
@@ -30,14 +32,14 @@ const notes: NoteDto[] = [
 
 app.use(express.json());
 
-app.get("/api/notes", (_request: any, response: any) => {
+app.get(`/${GetNotes.api.path}`, (_request: Request, response: Response) => {
     response.send(notes)
 });
 
-app.get("/api/notes/:email", (request: any, response: any) => {
+app.get(`/${GetNotesByEmail.api.path}`, (request: Request, response: Response) => {
     response.send(notes.filter(it => it.email === request.params.email));
 });
 
-app.listen(3000, () => {
-    console.log("Server Listening on port:", 3000);
+app.listen(port, () => {
+    console.log("Server Listening on port:", port);
 });
