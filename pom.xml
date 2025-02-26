@@ -21,6 +21,7 @@
         <module>api</module>
         <module>app</module>
         <module>domain</module>
+        <module>spi</module>
     </modules>
 
     <properties>
@@ -34,7 +35,7 @@
         <sortpom-maven-plugin.version>3.4.1</sortpom-maven-plugin.version>
         <springmockk.version>4.0.2</springmockk.version>
         <testcontainers.version>1.20.3</testcontainers.version>
-        <wirespec.version>0.9.18</wirespec.version>
+        <wirespec.version>0.11.9</wirespec.version>
     </properties>
 
     <dependencyManagement>
@@ -53,6 +54,26 @@
                 <groupId>community.flock</groupId>
                 <artifactId>domain</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock</groupId>
+                <artifactId>spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>jackson-jvm</artifactId>
+                <version>${wirespec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>spring-jvm</artifactId>
+                <version>${wirespec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock.wirespec.integration</groupId>
+                <artifactId>wirespec-jvm</artifactId>
+                <version>${wirespec.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.arrow-kt</groupId>

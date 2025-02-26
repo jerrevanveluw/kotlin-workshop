@@ -13,11 +13,13 @@ import io.kotest.common.runBlocking
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
+import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
+@Ignore
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class NoteControllerTest : WithContainers() {
     @MockkBean

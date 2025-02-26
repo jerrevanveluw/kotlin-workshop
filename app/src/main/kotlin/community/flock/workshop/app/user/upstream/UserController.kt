@@ -1,6 +1,6 @@
 package community.flock.workshop.app.user.upstream
 
-import community.flock.workshop.api.user.UserDto
+import community.flock.wirespec.generated.UserDto
 import community.flock.workshop.app.common.handle
 import community.flock.workshop.app.user.upstream.UserIdConsumer.validate
 import community.flock.workshop.app.user.upstream.UserTransformer.validate

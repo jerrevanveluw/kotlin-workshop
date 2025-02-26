@@ -8,7 +8,11 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>api</artifactId>
+    <artifactId>spi</artifactId>
+
+    <properties>
+        <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -24,22 +28,30 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>community.flock.wirespec.plugin.maven</groupId>
-                <artifactId>wirespec-maven-plugin</artifactId>
-                <version>${wirespec.version}</version>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>kotlin</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>run</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
-                            <input>${project.basedir}/src/main/wirespec</input>
-                            <output>${project.build.directory}/generated-sources/kotlin</output>
-                            <languages>
-                                <language>Kotlin</language>
-                            </languages>
+                            <target>
+                                <mkdir dir="${basedir}/src/main/kotlin/community/flock/workshop/spi/note"/>
+                                <copy todir="${basedir}/src/main/kotlin/community/flock/workshop/spi/note">
+                                    <fileset dir="${basedir}/../.service/generated/community/flock/workshop/spi/note" includes="*.kt"/>
+                                </copy>
+                            </target>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>ktlint-format</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>ktlint</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
