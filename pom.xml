@@ -20,6 +20,7 @@
     <modules>
         <module>api</module>
         <module>app</module>
+        <module>domain</module>
     </modules>
 
     <properties>
@@ -46,6 +47,11 @@
             <dependency>
                 <groupId>community.flock</groupId>
                 <artifactId>api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>community.flock</groupId>
+                <artifactId>domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

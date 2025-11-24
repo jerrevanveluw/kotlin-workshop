@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21
+FROM eclipse-temurin:25-alpine
 RUN mkdir /app
 COPY target/app-*.jar /app
 EXPOSE 8080

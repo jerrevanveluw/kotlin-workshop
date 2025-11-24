@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class NoteControllerTest : WithContainers {
     @MockkBean
-    private lateinit var noteAdapter: NoteAdapter
+    private lateinit var noteAdapter: LiveNoteAdapter
 
     @Autowired
     private lateinit var userController: UserController
